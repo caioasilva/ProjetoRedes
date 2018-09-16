@@ -1,0 +1,21 @@
+body {
+    background-image:url('image.jpg');
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    color: #fff;
+    text-shadow:
+     -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+       1px 1px 0 #000,
+       3px 3px 0 #000;
+    font-size: 40pt;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Tahoma, Geneva, sans-serif;
+}
