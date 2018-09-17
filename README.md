@@ -7,4 +7,9 @@ CCO-130 / 21237 - DC/UFSCar
 - Antonio Lopes
 
 ## Etapa 1
-Implementação de uma camada de aplicação. Servidor HTTP básico.
+Implementação de uma camada de aplicação. 
+Foi desenvolvido um servidor HTTP básico (somente GET), capaz de fornecer arquivos a partir de um diretório.
+
+## Como usar
+Executar o script "etapa1.py"
+O servidor HTTP sera iniciado na porta 8080
