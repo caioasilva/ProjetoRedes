@@ -2,7 +2,8 @@
 # -*- encoding: utf-8 -*-
 import socket
 import select
-from pathlib import Path
+from app import HTTPServer
+
 
 IP = ""
 PORT = 8080
@@ -13,12 +14,15 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind((IP, PORT))
 server.listen(5)
 server.setblocking(0)
+app = HTTPServer("www")
 
 print("Server Running at http://{}:{}\n".format(IP if IP else "127.0.0.1", PORT))
 
 clients = []
 reqs = {}
 responses = {}
+
+
 
 while True:
     # Call select to ask the OS to check given sockets whether they are ready to write, read, or if
@@ -36,33 +40,9 @@ while True:
         else:
             reqs[client] += client.recv(1500)
             req = reqs[client]
-            if req[-4:] == b'\r\n\r\n':
-                print("Request from", client.getpeername())
-                method, path, http = req.split(b' ', 2)
-                if method == b'GET':
-                    path = path.decode()
-                    print("GET", path)
-                    if path == "/":
-                        path = "/index.html"
-                    file = Path(FILES_DIR + path)
-                    if file.is_file():
-                        bin = file.read_bytes()
-                        header = b"HTTP/1.0 200 OK\r\nContent-Length: %d\r\n\r\n" % len(bin)
-                        resp = header + bin
-                        print("200 OK")
-                    else:
-                        bin = b"File not found"
-                        header = b"HTTP/1.0 404 Not Found\r\nContent-Length: %d\r\n\r\n" % len(bin)
-                        resp = header + bin
-                        print("404 Not Found")
-                else:
-                    # other methods not implemented
-                    bin = b"Bad Request"
-                    header = b"HTTP/1.0 400 Bad Request\r\nContent-Length: %d\r\n\r\n" % len(bin)
-                    resp = header + bin
-                    print("400 Bad Request")
-                del reqs[client]
-                responses[client] = resp
+            print("Request from", client.getpeername())
+            responses[client] = app.request(req)
+            del reqs[client]
 
     for client in writable:
         if client in responses.keys():
