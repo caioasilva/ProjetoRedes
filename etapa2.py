@@ -22,7 +22,8 @@ OK  Estimar o timeout para retransmissão de acordo com as recomendações do li
 ?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
 ?   Tratar e informar corretamente o campo window size, implementando controle de fluxo.
 ?   Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
-OK  Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
+OK? Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
+    Acho que nao ta certo
 '''
 
 FLAGS_FIN = 1 << 0  # Fim de conexao
@@ -338,7 +339,7 @@ class IPv4_TCP:
 if __name__ == '__main__':
 
     # O app é a camada de aplicação que desenvolvemos na etapa 1
-    app = HTTPServer("www")
+    app = HTTPServer(FILES_DIR)
     fd = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
     print("Servidor rodando em: http://{}:{}\n".format("127.0.0.1", PORT))
 

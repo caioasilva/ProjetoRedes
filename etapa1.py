@@ -14,7 +14,7 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind((IP, PORT))
 server.listen(5)
 server.setblocking(0)
-app = HTTPServer("www")
+app = HTTPServer(FILES_DIR)
 
 print("Server Running at http://{}:{}\n".format(IP if IP else "127.0.0.1", PORT))
 
