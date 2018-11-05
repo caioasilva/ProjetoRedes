@@ -39,6 +39,7 @@ FILES_DIR = "www"  # Pasta do servidor HTTP
 
 # MSS = 1460  # Maximum Segment Size
 MSS = 65483  # Maximum Segment Size
+SSTHRESH = 100 # Determines wheter slow start or congestion avoidance algorithm is used
 
 class TCP_Socket:
     # Lista static de conexões abertas
@@ -72,7 +73,12 @@ class TCP_Socket:
         self.flag_fin = False
 
         # Windows size (em desenvolvimento)
-        self.send_window_size = MSS
+        if MSS > 2190:
+                self.send_window_size = 2 * MSS
+        elif MSS > 1095:
+                self.send_window_size = 3 * MSS
+        elif MSS <= 1095:
+                self.send_window_size = 4 * MSS
         self.recv_window_size = 1024
 
         # RTT
@@ -202,7 +208,8 @@ class TCP_Socket:
     # Trata recebimento do ack_no
     def ack_recv(self, packet_tcp):
         ack_no = packet_tcp.ack_no
-        self.send_window_size = packet_tcp.window_size
+        if MSS > packet_tcp.window_size:
+                MSS = MSS - MSS//packet_tcp.window_size
         if ack_no > self.seq_no_base:
             # Handshake, nenhum dado presente nas filas
             # Duvidas... o que fzr
