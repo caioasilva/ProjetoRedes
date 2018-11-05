@@ -37,7 +37,8 @@ FLAGS_SYNACK = FLAGS_ACK | FLAGS_SYN
 PORT = 8080  # Porta utilizada
 FILES_DIR = "www"  # Pasta do servidor HTTP
 
-MSS = 1460  # Maximum Segment Size
+# MSS = 1460  # Maximum Segment Size
+MSS = 65483  # Maximum Segment Size
 
 class TCP_Socket:
     # Lista static de conexões abertas
@@ -71,7 +72,8 @@ class TCP_Socket:
         self.flag_fin = False
 
         # Windows size (em desenvolvimento)
-        self.window_size = 10 * MSS
+        self.send_window_size = MSS
+        self.recv_window_size = 1024
 
         # RTT
         self.estimated_rtt = 0
@@ -112,6 +114,7 @@ class TCP_Socket:
             conexao = TCP_Socket(fd, packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port,
                                  struct.unpack('I', os.urandom(4))[0], packet.seq_no + 1)
             conexao.packet_time[conexao.next_seq_no] = time.time()
+            conexao.send_window_size = packet.window_size
             conexao.send_segment(conexao.make_tcp_packet(FLAGS_SYNACK))
             conexao.next_seq_no += 1
 
@@ -164,7 +167,7 @@ class TCP_Socket:
 
     def make_tcp_packet(self, flags):
         return struct.pack('!HHIIHHHH', self.dst_port, self.src_port, self.next_seq_no, self.ack_no,
-                           (5 << 12) | flags, 1024, 0, 0)
+                           (5 << 12) | flags, self.recv_window_size, 0, 0)
 
     def send_segment(self, segment):
         self.fd.sendto(IPv4_TCP(self.src_addr, self.dst_addr, segment).fix_checksum().packet,
@@ -173,8 +176,8 @@ class TCP_Socket:
     def send(self, total_payload = b''):
         self.send_queue += total_payload
 
-        send_now = self.send_queue[:self.window_size]
-        self.send_queue = self.send_queue[self.window_size:]
+        send_now = self.send_queue[:self.send_window_size]
+        self.send_queue = self.send_queue[self.send_window_size:]
 
         for i in range(0, len(send_now), MSS):
             payload = send_now[i:i + MSS]
@@ -199,9 +202,11 @@ class TCP_Socket:
     # Trata recebimento do ack_no
     def ack_recv(self, packet_tcp):
         ack_no = packet_tcp.ack_no
+        self.send_window_size = packet_tcp.window_size
         if ack_no > self.seq_no_base:
             # Handshake, nenhum dado presente nas filas
             # Duvidas... o que fzr
+
             if self.flag_handshake:
                 self.seq_no_base = ack_no
                 self.flag_handshake = False
