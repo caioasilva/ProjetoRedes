@@ -15,13 +15,12 @@ from app import HTTPServer
 '''
 Tarefas:
 OK  Estabelecer conexão (handshake SYN, SYN+ACK, ACK) com número de sequência inicial aleatório.
-OK? Transmitir e receber corretamente os segmentos. 
-    (A transmissão de arquivos grandes ta beleza. O recebimento não foi testado e provavelmente falhará para esse caso)
+OK  Transmitir e receber corretamente os segmentos. (Transmissão OK)
 OK  Retransmitir corretamente segmentos que forem perdidos ou corrompidos.
 OK  Estimar o timeout para retransmissão de acordo com as recomendações do livro-texto (RFC 2988).
 ?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
-?   Tratar e informar corretamente o campo window size, implementando controle de fluxo.
-?   Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
+OK  Tratar e informar corretamente o campo window size, implementando controle de fluxo.
++-  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
 OK? Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
     Acho que nao ta certo
 '''
@@ -63,6 +62,7 @@ class TCP_Socket:
 
         # Fila de envio
         self.send_queue = b""
+        self.sent_bytes_not_ack = 0
 
         # Timer
         self.packet_timers = {}
@@ -72,10 +72,15 @@ class TCP_Socket:
         self.flag_close_conection = False
         self.flag_fin = False
 
-
         self.send_window_size = send_window_size
         self.recv_window_size = 1460
-        self.congestion_window = MSS
+        if MSS > 2190:
+            self.congestion_window = int(MSS * 2)
+        elif MSS > 1095:
+            self.congestion_window = int(MSS * 3)
+        else:
+            self.congestion_window = int(MSS * 4)
+
         self.ssthresh = 65536
         self.lasterror_congestion_window = self.ssthresh
 
@@ -185,17 +190,18 @@ class TCP_Socket:
         print("\nSend Window size:", self.send_window_size)
         print("Congestion Window size:", self.congestion_window)
         print("Transmission Window size:", window_size)
-        print("ssthresh", self.ssthresh)
+        print("ssthresh:", self.ssthresh)
         print("Last error size", self.lasterror_congestion_window, "\n")
-
+        self.sent_bytes_not_ack = len(send_now)
 
         for i in range(0, len(send_now), MSS):
             payload = send_now[i:i + MSS]
             self.send_raw(payload)
 
+
     def resend(self, expected_ack, segment):
         print('\nrr Retransmission', expected_ack)
-        self.ssthresh = self.transmission_window() / 2
+        self.ssthresh = max(self.transmission_window() / 2, MSS * 2)
         self.lasterror_congestion_window = self.congestion_window
         self.congestion_window = MSS
         print("rr ssthresh redefinido:", self.ssthresh, "Congestion window:", self.congestion_window)
@@ -256,6 +262,18 @@ class TCP_Socket:
                 print(">>>>>>> Recebido ack:", ack_no)
                 qtd_dados = ack_no - self.seq_no_base
                 print("Quant dados:", qtd_dados)
+                self.sent_bytes_not_ack -= qtd_dados
+                print("Quant dados faltando ACK: ", self.sent_bytes_not_ack)
+
+                # ajusta janela
+                # slow start
+                if self.congestion_window <= self.ssthresh and self.transmission_window() <= self.lasterror_congestion_window / 2:
+                    # duplica a congestion window após o recebimento de todos os ack
+                    self.congestion_window += min(self.sent_bytes_not_ack, MSS)
+                # congestion avoidance
+                else:
+                    self.congestion_window += int(MSS * MSS / self.congestion_window)
+
                 # Atualiza seq_no_base
                 self.seq_no_base = ack_no
 
@@ -279,13 +297,6 @@ class TCP_Socket:
                 # Se todos os acks chegaram
                 if len(self.packet_timers) == 0:
                     # Envia proxima janela
-                    #slow start
-                    if self.congestion_window <= self.ssthresh and self.transmission_window() <= self.lasterror_congestion_window/2:
-                        # duplica a congestion window após o recebimento de todos os ack
-                        self.congestion_window = int(self.congestion_window*2)
-                    #congestion avoidance
-                    else:
-                        self.congestion_window += int(MSS*MSS/self.congestion_window)
                     if self.send_queue != b'':
                         self.send()
                     else:
