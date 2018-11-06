@@ -20,9 +20,8 @@ OK  Retransmitir corretamente segmentos que forem perdidos ou corrompidos.
 OK  Estimar o timeout para retransmissão de acordo com as recomendações do livro-texto (RFC 2988).
 ?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
 OK  Tratar e informar corretamente o campo window size, implementando controle de fluxo.
-+-  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
-OK? Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
-    Acho que nao ta certo
+OK  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
+OK  Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
 '''
 
 FLAGS_FIN = 1 << 0  # Fim de conexao
@@ -70,8 +69,9 @@ class TCP_Socket:
 
         # Flags
         self.flag_handshake = True
-        self.flag_close_conection = False
-        self.flag_fin = False
+        self.flag_close_connection = False
+        self.flag_fin_recv = False
+        self.flag_fin_sent = False
 
         self.send_window_size = send_window_size
         self.recv_window_size = 1460
@@ -132,24 +132,23 @@ class TCP_Socket:
             conexao = TCP_Socket.open_conns[id_conn]
 
             if (packet.flags & FLAGS_FIN) == FLAGS_FIN:
-                conexao.flag_fin = True
+                conexao.flag_fin_recv = True
                 conexao.fin_recv(packet)
 
             if (packet.flags & FLAGS_ACK) == FLAGS_ACK:
-                # Recebe ack e tirar da fila de nao confirmados
+                # Recebe e processa pacote ACK
                 conexao.ack_recv(packet)
 
-            if (len(packet.payload) != 0):
-                # Recebe payload e envia pacote com ack e sem dados
-                conexao.payload_recv(packet)
+                if (len(packet.payload) != 0):
+                    # Recebe payload e envia pacote com ack e sem dados
+                    conexao.payload_recv(packet)
         else:
             print('INVALIDA: %s:%d -> %s:%d (pacote associado a conexao desconhecida)' %
                   (packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port))
 
 
     # Enviando dados pelo raw socket
-    def send_raw(self, payload):
-
+    def raw_send(self, payload):
         # Montando pacote
         segment = self.make_tcp_packet(FLAGS_ACK) + payload
 
@@ -172,7 +171,13 @@ class TCP_Socket:
     def close(self):
         # Flag que avisa intenção do app de fechar conexão
         print("\nXX Fechamento de conexão solicitada pela aplicação\n")
-        self.flag_close_conection = True
+        self.flag_close_connection = True
+        if self.send_queue == b'':
+            print("Enviando FIN")
+            # Enviando fechamento de conexão
+            self.send_segment(self.make_tcp_packet(FLAGS_FIN))
+            self.flag_fin_sent = True
+            self.next_seq_no += 1
 
     def make_tcp_packet(self, flags):
         return struct.pack('!HHIIHHHH', self.dst_port, self.src_port, self.next_seq_no, self.ack_no,
@@ -197,7 +202,7 @@ class TCP_Socket:
 
         for i in range(0, len(send_now), MSS):
             payload = send_now[i:i + MSS]
-            self.send_raw(payload)
+            self.raw_send(payload)
 
 
     def resend(self, expected_ack, segment):
@@ -216,8 +221,13 @@ class TCP_Socket:
         if self.ack_no == packet_tcp.seq_no:
             # Se tiver recebido tudo certo até aqui, incrementa 1 para informar que é um ACK do FIN
             self.ack_no += 1
-        # Senão, o valor de ack_no terá sido mantido, fazendo com que a outra ponta saiba onde paramos de receber dados
-        self.send_segment(self.make_tcp_packet(FLAGS_ACK))
+        print("FIN Recebido")
+        if not self.flag_fin_sent:
+            self.send_segment(self.make_tcp_packet(FLAGS_ACK | FLAGS_FIN))
+            self.flag_fin_sent = True
+            print("Enviando FIN, ACK")
+        else:
+            self.send_segment(self.make_tcp_packet(FLAGS_ACK))
 
     def transmission_window(self):
         return int(min(self.send_window_size, self.congestion_window))
@@ -243,21 +253,22 @@ class TCP_Socket:
     def ack_recv(self, packet_tcp):
         ack_no = packet_tcp.ack_no
         self.send_window_size = packet_tcp.window_size
-        if ack_no > self.seq_no_base:
+        if self.flag_fin_recv:
+            for timer in self.packet_timers:
+                timer.cancel()
+            self.open_conns.pop(self.id_conn)
+            print("------------------ Conexão encerrada -------------------------------\n")
+        elif ack_no > self.seq_no_base:
 
             if self.flag_handshake:
                 self.seq_no_base = ack_no
                 self.flag_handshake = False
                 print("+++ Handshake\n")
 
-                # atualiza timeout combaseno rtt
+                # atualiza timeout combase no rtt
                 self.calc_timeout(self.packet_time[ack_no-1])
 
-            # Flag de finalizar conexão ativa
-            elif self.flag_fin and len(self.packet_timers)==0:
-                self.seq_no_base = ack_no
-                self.open_conns.pop(self.id_conn)
-                print("------------------ Conexão encerrada -------------------------------\n")
+
             else:
                 # Dados confirmados a serem removidos da noAck_
                 print(">>>>>>> Recebido ack:", ack_no)
@@ -295,7 +306,7 @@ class TCP_Socket:
                     # Fast Retransmit/Fast Recovery
                     self.duplicate_count += 1
                     if self.duplicate_count < 3:
-                        self.transmission_window = send_window_size + int(MSS * 2)
+                        self.transmission_window = self.send_window_size + int(MSS * 2)
                     elif self.duplicate_count == 3:
                         self.ssthresh = max(int(self.transmission_window()/2), int(MSS * 2))
                         print("ssthresh redefinido", self.ssthresh, "\n")
@@ -311,13 +322,14 @@ class TCP_Socket:
                     # Envia proxima janela
                     if self.send_queue != b'':
                         self.send()
-                    else:
-                        # Se a flag de fechamento estiver definida, executa o envio de FIN
-                        if self.flag_close_conection:
-                            print("______ Fim da fila de envio e retrasmissoes. Envio de FIN")
-                            # Enviando fechamento de conexão
-                            self.send_segment(self.make_tcp_packet(FLAGS_FIN))
-                            self.next_seq_no += 1
+                    # Se a flag de fechamento estiver definida, executa o envio de FIN
+                    elif self.flag_close_connection:
+                        print("Fim da fila de envio e retransmissoes. Enviando FIN")
+                        # Enviando fechamento de conexão
+                        self.send_segment(self.make_tcp_packet(FLAGS_FIN))
+                        self.flag_fin_sent = True
+                        self.next_seq_no += 1
+
 
     # Trata recebimento de payload
     def payload_recv(self, packet_tcp):
