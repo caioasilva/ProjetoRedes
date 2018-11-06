@@ -20,8 +20,8 @@ OK  Retransmitir corretamente segmentos que forem perdidos ou corrompidos.
 OK  Estimar o timeout para retransmissão de acordo com as recomendações do livro-texto (RFC 2988).
 ?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
 OK  Tratar e informar corretamente o campo window size, implementando controle de fluxo.
-+-  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
-OK? Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
+OK  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
+OK Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
     Acho que nao ta certo
 '''
 
