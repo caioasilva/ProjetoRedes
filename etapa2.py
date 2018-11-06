@@ -19,7 +19,7 @@ OK  Estabelecer conexão (handshake SYN, SYN+ACK, ACK) com número de sequência
 OK  Transmitir e receber corretamente os segmentos. (Transmissão OK)
 OK  Retransmitir corretamente segmentos que forem perdidos ou corrompidos.
 OK  Estimar o timeout para retransmissão de acordo com as recomendações do livro-texto (RFC 2988).
-?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
+OK  Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
 OK  Tratar e informar corretamente o campo window size, implementando controle de fluxo.
 OK  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
 OK  Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
@@ -44,13 +44,15 @@ PORT = 8080  # Porta utilizada
 FILES_DIR = "www"  # Pasta do servidor HTTP
 
 MSS = 16384  # Maximum Segment Size
+TIMEOUT = 9 * 60  # segundos
+
 
 class TCP_Socket:
     # Lista static de conexões abertas
     open_conns = {}
 
     # Construtor Conexão
-    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, seq_no, ack_no, send_window_size = MSS):
+    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, seq_no, ack_no, send_window_size=MSS):
         # Identificador da conexao
         self.id_conn = self.generate_id(src_addr, src_port, dst_addr, dst_port)
 
@@ -64,6 +66,7 @@ class TCP_Socket:
         self.next_seq_no = seq_no  # Controle de envio de seq_no
 
         self.packet_time = {}  # Dicionario (seq_no, current time)
+        self.packet_first_time = {}
 
         # Fila de envio
         self.send_queue = b""
@@ -110,7 +113,7 @@ class TCP_Socket:
 
     @staticmethod
     def generate_id(src_addr, src_port, dst_addr, dst_port):
-        return str(src_addr)+str(src_port)+str(dst_addr)+str(dst_port)
+        return str(src_addr) + str(src_port) + str(dst_addr) + str(dst_port)
 
     # Metodo chamado no loop principal para receber os dados do socket
     @staticmethod
@@ -152,7 +155,6 @@ class TCP_Socket:
             print('INVALIDA: %s:%d -> %s:%d (pacote associado a conexao desconhecida)' %
                   (packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port))
 
-
     # Enviando dados pelo raw socket
     def raw_send(self, payload):
         # Montando pacote
@@ -164,15 +166,15 @@ class TCP_Socket:
         self.next_seq_no = (self.next_seq_no + len(payload)) & 0xffffffff
         # Adiciona timer se nao tiver
         if self.next_seq_no not in self.packet_timers:
-            self.packet_timers[self.next_seq_no] = asyncio.get_event_loop().call_later(self.timeout_interval, self.resend,
-                                                                                  self.next_seq_no, segment)
+            self.packet_timers[self.next_seq_no] = asyncio.get_event_loop().call_later(self.timeout_interval,
+                                                                                       self.resend,
+                                                                                       self.next_seq_no, segment,
+                                                                                       self.timeout_interval)
             print("++ Timer Criado", self.next_seq_no, 'Timeout:', self.timeout_interval)
 
         # Adicionando current time do seq_no enviado
         self.packet_time[self.next_seq_no] = time.time()
-
-
-
+        self.packet_first_time[self.next_seq_no] = self.packet_time[self.next_seq_no]
 
     def close(self):
         # Flag que avisa intenção do app de fechar conexão
@@ -180,6 +182,12 @@ class TCP_Socket:
         self.flag_close_connection = True
         if self.send_queue == b'':
             print("Enviando FIN")
+            timer_list = list(self.packet_timers.keys())
+            for key in timer_list:
+                self.packet_timers[key].cancel()
+                del self.packet_timers[key]
+                # del self.packet_first_time[key]
+
             # Enviando fechamento de conexão
             self.send_segment(self.make_tcp_packet(FLAGS_FIN))
             self.flag_fin_sent = True
@@ -193,7 +201,7 @@ class TCP_Socket:
         self.fd.sendto(IPv4_TCP(self.src_addr, self.dst_addr, segment).fix_checksum().packet,
                        (self.src_addr, self.src_port))
 
-    def send(self, total_payload = b''):
+    def send(self, total_payload=b''):
         self.send_queue += total_payload
 
         window_size = self.transmission_window()
@@ -210,18 +218,22 @@ class TCP_Socket:
             payload = send_now[i:i + MSS]
             self.raw_send(payload)
 
-
-    def resend(self, expected_ack, segment):
-        print('\nrr Retransmission', expected_ack)
-        self.ssthresh = max(self.transmission_window() / 2, MSS * 2)
-        self.lasterror_congestion_window = self.congestion_window
-        self.congestion_window = MSS
-        print("rr ssthresh redefinido:", self.ssthresh, "Congestion window:", self.congestion_window)
-        self.send_segment(segment)
-        self.packet_timers[expected_ack] = asyncio.get_event_loop().call_later(self.timeout_interval, self.resend,
-                                                                               expected_ack, segment)
-        print("r++ Timer Retransmission", expected_ack, "\n")
-
+    def resend(self, expected_ack, segment, last_time):
+        if time.time() - self.packet_first_time[expected_ack] >= TIMEOUT:
+            del self.packet_timers[expected_ack]
+            del self.packet_first_time[expected_ack]
+            print("xx TIMEOUT Pacote", expected_ack)
+        else:
+            print('\nrr Retransmission', expected_ack)
+            self.ssthresh = max(self.transmission_window() / 2, MSS * 2)
+            self.lasterror_congestion_window = self.congestion_window
+            self.congestion_window = MSS
+            print("rr ssthresh redefinido:", self.ssthresh, "Congestion window:", self.congestion_window)
+            self.send_segment(segment)
+            last_time = last_time * 2
+            self.packet_timers[expected_ack] = asyncio.get_event_loop().call_later(last_time, self.resend,
+                                                                                   expected_ack, segment, last_time)
+            print("r++ Timer Retransmission", expected_ack, "Tempo:", last_time, "\n")
 
     def fin_recv(self, packet_tcp):
         if self.ack_no == packet_tcp.seq_no:
@@ -262,8 +274,10 @@ class TCP_Socket:
         if self.flag_fin_recv:
             for timer in self.packet_timers:
                 timer.cancel()
-            self.open_conns.pop(self.id_conn)
+            self.packet_timers = {}
             print("------------------ Conexão encerrada -------------------------------\n")
+            del self.open_conns[self.id_conn]
+
         elif ack_no > self.seq_no_base:
 
             if self.flag_handshake:
@@ -272,8 +286,8 @@ class TCP_Socket:
                 print("+++ Handshake\n")
 
                 # atualiza timeout combase no rtt
-                self.calc_timeout(self.packet_time[ack_no-1])
-
+                self.calc_timeout(self.packet_time[ack_no - 1])
+                del self.packet_time[ack_no - 1]
 
             else:
                 # Dados confirmados a serem removidos da noAck_
@@ -299,6 +313,8 @@ class TCP_Socket:
                 # atualiza timeout combaseno rtt
                 self.calc_timeout(self.packet_time[ack_no])
 
+                del self.packet_time[ack_no]
+
                 timer_list = list(self.packet_timers.keys())
                 if ack_no in timer_list:
                     self.duplicate_count = 0
@@ -306,15 +322,16 @@ class TCP_Socket:
                         if key <= ack_no:
                             self.packet_timers[key].cancel()
                             del self.packet_timers[key]
+                            del self.packet_first_time[key]
                             print("-- Timer Pacote", key, "cancelado")
                 else:
                     print("\nddd ACK DUPLICADO", ack_no)
                     # Fast Retransmit/Fast Recovery
                     self.duplicate_count += 1
                     if self.duplicate_count < 3:
-                        self.transmission_window = self.send_window_size + int(MSS * 2)
+                        self.congestion_window = self.send_window_size + int(MSS * 2)
                     elif self.duplicate_count == 3:
-                        self.ssthresh = max(int(self.transmission_window()/2), int(MSS * 2))
+                        self.ssthresh = max(int(self.transmission_window() / 2), int(MSS * 2))
                         print("ssthresh redefinido", self.ssthresh, "\n")
                         self.send_window_size = self.ssthresh + int(MSS * 3)
                     else:
@@ -336,7 +353,6 @@ class TCP_Socket:
                         self.flag_fin_sent = True
                         self.next_seq_no += 1
 
-
     # Trata recebimento de payload
     def payload_recv(self, packet_tcp):
         if self.ack_no == packet_tcp.seq_no:
@@ -348,6 +364,7 @@ class TCP_Socket:
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
 
+
 class IPv4_TCP:
 
     def __init__(self, src_addr, dst_addr, segment):
@@ -357,7 +374,6 @@ class IPv4_TCP:
         self.src_port, self.dst_port, self.seq_no, self.ack_no, self.flags, self.window_size, self.checksum, \
         self.urg_ptr = struct.unpack('!HHIIHHHH', segment[:20])
         self.payload = segment[4 * (self.flags >> 12):]
-
 
     @staticmethod
     def handle_ipv4_header(packet):
@@ -377,10 +393,10 @@ class IPv4_TCP:
     def str2addr(addr):
         return bytes(int(x) for x in addr.split('.'))
 
-
     def fix_checksum(self):
         # Endereco de origem | Endereco de destino | formato, Identificador TCP, Tamanho do segmento
-        pseudohdr = self.str2addr(self.src_addr) + self.str2addr(self.dst_addr) + struct.pack('!HH', 0x0006, len(self.segment))
+        pseudohdr = self.str2addr(self.src_addr) + self.str2addr(self.dst_addr) + struct.pack('!HH', 0x0006,
+                                                                                              len(self.segment))
         seg = bytearray(self.segment)
         seg[16:18] = b'\x00\x00'
         seg[16:18] = struct.pack('!H', self.calc_checksum(pseudohdr + seg))
@@ -403,7 +419,6 @@ class IPv4_TCP:
 
 
 if __name__ == '__main__':
-
     # O app é a camada de aplicação que desenvolvemos na etapa 1
     app = HTTPServer(FILES_DIR)
     fd = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
