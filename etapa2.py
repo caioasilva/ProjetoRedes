@@ -38,7 +38,7 @@ PORT = 8080  # Porta utilizada
 FILES_DIR = "www"  # Pasta do servidor HTTP
 
 # MSS = 1460  # Maximum Segment Size
-MSS = 65483  # Maximum Segment Size
+MSS = 16384  # Maximum Segment Size
 SSTHRESH = 100 # Determines wheter slow start or congestion avoidance algorithm is used
 
 class TCP_Socket:
@@ -46,7 +46,7 @@ class TCP_Socket:
     open_conns = {}
 
     # Construtor Conexão
-    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, seq_no, ack_no):
+    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, seq_no, ack_no, send_window_size = MSS):
         # Identificador da conexao
         self.id_conn = self.generate_id(src_addr, src_port, dst_addr, dst_port)
 
@@ -72,25 +72,25 @@ class TCP_Socket:
         self.flag_close_conection = False
         self.flag_fin = False
 
-        # Windows size (em desenvolvimento)
-        if MSS > 2190:
-                self.send_window_size = 2 * MSS
-        elif MSS > 1095:
-                self.send_window_size = 3 * MSS
-        elif MSS <= 1095:
-                self.send_window_size = 4 * MSS
-        self.recv_window_size = 1024
+
+        self.send_window_size = send_window_size
+        self.recv_window_size = 1460
+        self.congestion_window = MSS
+        self.ssthresh = 65536
+        self.lasterror_congestion_window = self.ssthresh
 
         # RTT
-        self.estimated_rtt = 0
+        self.estimated_rtt = 1  # inicial 1 segundos
         self.dev_rtt = 0
-        self.timeout_interval = 2  # inicial 2 segundos
+        self.timeout_interval = 0
 
         # Raw Socket a ser utilizado na conexão (File descriptor)
         self.fd = fd
 
         # Colocando a nova conexão na lista static
         self.open_conns[self.id_conn] = self
+
+        self.packet_time[self.next_seq_no] = time.time()
 
         # Print de informação de nova conexão
         print('/\\/\\ Nova Conexão: %s:%d -> %s:%d (seq=%d, ack=%d) /\\/\\'
@@ -118,9 +118,7 @@ class TCP_Socket:
         # Conexao requerida e aceita
         if (packet.flags & FLAGS_SYN) == FLAGS_SYN:
             conexao = TCP_Socket(fd, packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port,
-                                 struct.unpack('I', os.urandom(4))[0], packet.seq_no + 1)
-            conexao.packet_time[conexao.next_seq_no] = time.time()
-            conexao.send_window_size = packet.window_size
+                                 struct.unpack('I', os.urandom(4))[0], packet.seq_no + 1, packet.window_size)
             conexao.send_segment(conexao.make_tcp_packet(FLAGS_SYNACK))
             conexao.next_seq_no += 1
 
@@ -152,18 +150,17 @@ class TCP_Socket:
         # Enviando
         self.send_segment(segment)
         # print(segment)
-        expected_ack = self.next_seq_no + len(payload)
+        self.next_seq_no = (self.next_seq_no + len(payload)) & 0xffffffff
         # Adiciona timer se nao tiver
-        if expected_ack not in self.packet_timers:
-            self.packet_timers[expected_ack] = asyncio.get_event_loop().call_later(self.timeout_interval, self.resend,
-                                                                                   expected_ack, segment)
-            print("++ Timer Criado", expected_ack, 'Timeout:', self.timeout_interval)
+        if self.next_seq_no not in self.packet_timers:
+            self.packet_timers[self.next_seq_no] = asyncio.get_event_loop().call_later(self.timeout_interval, self.resend,
+                                                                                  self.next_seq_no, segment)
+            print("++ Timer Criado", self.next_seq_no, 'Timeout:', self.timeout_interval)
 
         # Adicionando current time do seq_no enviado
         self.packet_time[self.next_seq_no] = time.time()
 
-        # Atualizando sequence number
-        self.next_seq_no = (self.next_seq_no + len(payload)) & 0xffffffff
+
 
 
     def close(self):
@@ -182,19 +179,30 @@ class TCP_Socket:
     def send(self, total_payload = b''):
         self.send_queue += total_payload
 
-        send_now = self.send_queue[:self.send_window_size]
-        self.send_queue = self.send_queue[self.send_window_size:]
+        window_size = self.transmission_window()
+        send_now = self.send_queue[:window_size]
+        self.send_queue = self.send_queue[window_size:]
+        print("\nSend Window size:", self.send_window_size)
+        print("Congestion Window size:", self.congestion_window)
+        print("Transmission Window size:", window_size)
+        print("ssthresh", self.ssthresh)
+        print("Last error size", self.lasterror_congestion_window, "\n")
+
 
         for i in range(0, len(send_now), MSS):
             payload = send_now[i:i + MSS]
             self.send_raw(payload)
 
     def resend(self, expected_ack, segment):
-        print('Retransmission')
+        print('\nrr Retransmission', expected_ack)
+        self.ssthresh = self.transmission_window() / 2
+        self.lasterror_congestion_window = self.congestion_window
+        self.congestion_window = MSS
+        print("rr ssthresh redefinido:", self.ssthresh, "Congestion window:", self.congestion_window)
         self.send_segment(segment)
         self.packet_timers[expected_ack] = asyncio.get_event_loop().call_later(self.timeout_interval, self.resend,
                                                                                expected_ack, segment)
-        print("Timer resend criado", expected_ack)
+        print("r++ Timer Retransmission", expected_ack, "\n")
 
 
     def fin_recv(self, packet_tcp):
@@ -204,33 +212,40 @@ class TCP_Socket:
         # Senão, o valor de ack_no terá sido mantido, fazendo com que a outra ponta saiba onde paramos de receber dados
         self.send_segment(self.make_tcp_packet(FLAGS_ACK))
 
+    def transmission_window(self):
+        return int(min(self.send_window_size, self.congestion_window))
+
+    def calc_timeout(self, pack_time):
+        # sampleRTT
+        sample_rtt = time.time() - pack_time
+        # print("sampleRTT: " + str(sample_rtt))
+
+        # EstimatedRTT
+        self.estimated_rtt = 0.875 * self.estimated_rtt + 0.0125 * sample_rtt
+        # print("EstimatedRTT: " + str(self.estimated_rtt))
+
+        # DevRTT
+        self.dev_rtt = 0.75 * self.dev_rtt + 0.25 * abs(sample_rtt - self.estimated_rtt)
+        # print("DevRTT: " + str(self.dev_rtt))
+
+        # Timeout
+        self.timeout_interval = self.estimated_rtt + 4 * self.dev_rtt
+        print("i New Timeout: " + str(self.timeout_interval))
 
     # Trata recebimento do ack_no
     def ack_recv(self, packet_tcp):
         ack_no = packet_tcp.ack_no
-        if MSS > packet_tcp.window_size:
-                MSS = MSS - MSS//packet_tcp.window_size
+        self.send_window_size = packet_tcp.window_size
         if ack_no > self.seq_no_base:
-            # Handshake, nenhum dado presente nas filas
-            # Duvidas... o que fzr
 
             if self.flag_handshake:
                 self.seq_no_base = ack_no
                 self.flag_handshake = False
-                print("Conexao estabelecida...\n")
+                print("+++ Handshake\n")
 
-                # inicializando variaveis de controle de tempo
-                # sampleRTT
-                sample_rtt = time.time() - self.packet_time[ack_no - 1]
-                print("sampleRTT Inicial: " + str(sample_rtt))
+                # atualiza timeout combaseno rtt
+                self.calc_timeout(self.packet_time[ack_no-1])
 
-                # EstimatedRTT
-                self.estimated_rtt = sample_rtt
-                print("EstimatedRTT  Inicial: " + str(self.estimated_rtt))
-
-                # DevRTT
-                self.dev_rtt = sample_rtt / 2
-                print("DevRTT  Inicial: " + str(self.dev_rtt))
             # Flag de finalizar conexão ativa
             elif self.flag_fin and len(self.packet_timers)==0:
                 self.seq_no_base = ack_no
@@ -239,40 +254,38 @@ class TCP_Socket:
             else:
                 # Dados confirmados a serem removidos da noAck_
                 print(">>>>>>> Recebido ack:", ack_no)
-                qtd_dados_reconhecidos = ack_no - self.seq_no_base
-                print("Quant dados:", qtd_dados_reconhecidos)
+                qtd_dados = ack_no - self.seq_no_base
+                print("Quant dados:", qtd_dados)
                 # Atualiza seq_no_base
                 self.seq_no_base = ack_no
 
-                # sampleRTT
-                if ack_no - qtd_dados_reconhecidos in self.packet_time:
-                    sample_rtt = time.time() - self.packet_time[ack_no - qtd_dados_reconhecidos]
-                    print("sampleRTT: " + str(sample_rtt))
+                # atualiza timeout combaseno rtt
+                self.calc_timeout(self.packet_time[ack_no])
+
+                timer_list = list(self.packet_timers.keys())
+                if ack_no in timer_list:
+                    for key in timer_list:
+                        if key <= ack_no:
+                            self.packet_timers[key].cancel()
+                            del self.packet_timers[key]
+                            print("-- Timer Pacote", key, "cancelado")
                 else:
-                    sample_rtt = self.estimated_rtt
-                    print("problema de key")
-
-                # EstimatedRTT
-                self.estimated_rtt = 0.875 * self.estimated_rtt + 0.0125 * sample_rtt
-                print("EstimatedRTT: " + str(self.estimated_rtt))
-
-                # DevRTT
-                self.dev_rtt = 0.75 * self.dev_rtt + 0.25 * abs(sample_rtt - self.estimated_rtt)
-                print("DevRTT: " + str(self.dev_rtt))
-
-                # Timeout
-                self.timeout_interval = self.estimated_rtt + 4 * self.dev_rtt
-                print("Timeout: " + str(self.timeout_interval))
-                for key in list(self.packet_timers.keys()):
-                    if key <= ack_no:
-                        self.packet_timers[key].cancel()
-                        del self.packet_timers[key]
-                        print("-- Timer Pacote", key, "cancelado")
+                    print("\nddd ACK DUPLICADO", ack_no)
+                    self.lasterror_congestion_window = self.congestion_window
+                    self.ssthresh = int(self.transmission_window()/2)
+                    print("ssthresh redefinido", self.ssthresh, "\n")
                 print("")
 
                 # Se todos os acks chegaram
                 if len(self.packet_timers) == 0:
                     # Envia proxima janela
+                    #slow start
+                    if self.congestion_window <= self.ssthresh and self.transmission_window() <= self.lasterror_congestion_window/2:
+                        # duplica a congestion window após o recebimento de todos os ack
+                        self.congestion_window = int(self.congestion_window*2)
+                    #congestion avoidance
+                    else:
+                        self.congestion_window += int(MSS*MSS/self.congestion_window)
                     if self.send_queue != b'':
                         self.send()
                     else:

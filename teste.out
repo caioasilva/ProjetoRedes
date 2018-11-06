@@ -1,0 +1,1238 @@
+Servidor rodando em: http://127.0.0.1:8080
+
+/\/\ Nova Conexão: 127.0.0.1:45336 -> 127.0.0.1:8080 (seq=2326326395, ack=2631344975) /\/\
+Conexao estabelecida...
+
+sampleRTT Inicial: 0.0018093585968017578
+EstimatedRTT  Inicial: 0.0018093585968017578
+DevRTT  Inicial: 0.0009046792984008789
+GET /
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 2326326728 Timeout: 2
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 2326326728
+Quant dados: 332
+sampleRTT: 0.0002295970916748047
+EstimatedRTT: 0.0015860587358474732
+DevRTT: 0.0010176248848438262
+Timeout: 0.005656558275222778
+-- Timer Pacote 2326326728 cancelado
+
+______ Fim da fila de envio e retrasmissoes. Envio de FIN
+/\/\ Nova Conexão: 127.0.0.1:45338 -> 127.0.0.1:8080 (seq=3087099142, ack=3026411190) /\/\
+Conexao estabelecida...
+
+sampleRTT Inicial: 0.0002751350402832031
+EstimatedRTT  Inicial: 0.0002751350402832031
+DevRTT  Inicial: 0.00013756752014160156
+GET /style.css
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 3087099970 Timeout: 2
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 3087099970
+Quant dados: 827
+sampleRTT: 0.00014734268188476562
+EstimatedRTT: 0.0002425849437713623
+DevRTT: 0.00012698620557785034
+Timeout: 0.0007505297660827636
+-- Timer Pacote 3087099970 cancelado
+
+______ Fim da fila de envio e retrasmissoes. Envio de FIN
+/\/\ Nova Conexão: 127.0.0.1:45340 -> 127.0.0.1:8080 (seq=3746028526, ack=4150945191) /\/\
+Conexao estabelecida...
+
+sampleRTT Inicial: 0.0003485679626464844
+EstimatedRTT  Inicial: 0.0003485679626464844
+DevRTT  Inicial: 0.0001742839813232422
+GET /favicon.ico
+404 Not Found
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 3746028587 Timeout: 2
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 3746028587
+Quant dados: 60
+sampleRTT: 0.00027489662170410156
+EstimatedRTT: 0.0003084331750869751
+DevRTT: 0.00013909712433815002
+Timeout: 0.0008648216724395752
+-- Timer Pacote 3746028587 cancelado
+
+______ Fim da fila de envio e retrasmissoes. Envio de FIN
+/\/\ Nova Conexão: 127.0.0.1:45342 -> 127.0.0.1:8080 (seq=3022775800, ack=1844651947) /\/\
+Conexao estabelecida...
+
+sampleRTT Inicial: 0.0003457069396972656
+EstimatedRTT  Inicial: 0.0003457069396972656
+DevRTT  Inicial: 0.0001728534698486328
+GET /image.jpg
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 3022808568 Timeout: 2
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 3022808568
+Quant dados: 32767
+sampleRTT: 0.0018208026885986328
+EstimatedRTT: 0.00032525360584259035
+DevRTT: 0.0005035273730754853
+Timeout: 0.0023393630981445312
+-- Timer Pacote 3022808568 cancelado
+
+
+Send Window size: 43690
+Congestion Window size: 65534
+Transmission Window size: 43690
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 3022841335 Timeout: 0.0023393630981445312
+++ Timer Criado 3022852258 Timeout: 0.0023393630981445312
+
+rr Retransmission 3022841335
+rr ssthresh redefinido: 21845.0 Congestion window: 32767
+r++ Timer Retransmission 3022841335 
+
+>>>>>>> Recebido ack: 3022841335
+Quant dados: 32767
+sampleRTT: 0.014015436172485352
+EstimatedRTT: 0.00045978985726833347
+DevRTT: 0.003766557108610869
+Timeout: 0.015526018291711808
+-- Timer Pacote 3022841335 cancelado
+
+
+rr Retransmission 3022852258
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3022852258 
+
+>>>>>>> Recebido ack: 3022852258
+Quant dados: 10923
+sampleRTT: 0.01214742660522461
+EstimatedRTT: 0.0005541589576750994
+DevRTT: 0.005723234743345529
+Timeout: 0.023447097931057214
+-- Timer Pacote 3022852258 cancelado
+
+
+Send Window size: 43690
+Congestion Window size: 65534.0
+Transmission Window size: 43690
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3022885025 Timeout: 0.023447097931057214
+++ Timer Criado 3022895948 Timeout: 0.023447097931057214
+>>>>>>> Recebido ack: 3022885025
+Quant dados: 32767
+sampleRTT: 0.003414630889892578
+EstimatedRTT: 0.0005275719740893692
+DevRTT: 0.005014190786459949
+Timeout: 0.020584335119929166
+-- Timer Pacote 3022885025 cancelado
+
+>>>>>>> Recebido ack: 3022895948
+Quant dados: 10923
+sampleRTT: 0.00037932395935058594
+EstimatedRTT: 0.00046636702682008037
+DevRTT: 0.0037824038567123353
+Timeout: 0.015595982453669421
+-- Timer Pacote 3022895948 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 81917.5
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3022928715 Timeout: 0.015595982453669421
+++ Timer Criado 3022961482 Timeout: 0.015595982453669421
+++ Timer Criado 3022961483 Timeout: 0.015595982453669421
+>>>>>>> Recebido ack: 3022928715
+Quant dados: 32767
+sampleRTT: 0.007693767547607422
+EstimatedRTT: 0.0005042432428126631
+DevRTT: 0.004634183968732941
+Timeout: 0.01904097911774443
+-- Timer Pacote 3022928715 cancelado
+
+>>>>>>> Recebido ack: 3022961482
+Quant dados: 32767
+sampleRTT: 0.0004153251647949219
+EstimatedRTT: 0.0004464044020210168
+DevRTT: 0.0034834077858562295
+Timeout: 0.014380035545445934
+-- Timer Pacote 3022961482 cancelado
+
+>>>>>>> Recebido ack: 3022961483
+Quant dados: 1
+sampleRTT: 0.0004134178161621094
+EstimatedRTT: 0.00039577157447041606
+DevRTT: 0.0026169673998150955
+Timeout: 0.010863641173730797
+-- Timer Pacote 3022961483 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 95024.3
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3022994250 Timeout: 0.010863641173730797
+++ Timer Criado 3023027017 Timeout: 0.010863641173730797
+++ Timer Criado 3023027018 Timeout: 0.010863641173730797
+>>>>>>> Recebido ack: 3022994250
+Quant dados: 32767
+sampleRTT: 0.008599519729614258
+EstimatedRTT: 0.00045379412428179225
+DevRTT: 0.003999156951194438
+Timeout: 0.016450421929059544
+-- Timer Pacote 3022994250 cancelado
+
+>>>>>>> Recebido ack: 3023027017
+Quant dados: 32767
+sampleRTT: 0.00038743019104003906
+EstimatedRTT: 0.0004019127361345687
+DevRTT: 0.0030029883496694608
+Timeout: 0.012413866134812412
+-- Timer Pacote 3023027017 cancelado
+
+>>>>>>> Recebido ack: 3023027018
+Quant dados: 1
+sampleRTT: 0.0004177093505859375
+EstimatedRTT: 0.00035689501100007187
+DevRTT: 0.0022674448471485618
+Timeout: 0.009426674399594319
+-- Timer Pacote 3023027018 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 106323.26551724138
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3023059785 Timeout: 0.009426674399594319
+++ Timer Criado 3023092552 Timeout: 0.009426674399594319
+++ Timer Criado 3023092553 Timeout: 0.009426674399594319
+>>>>>>> Recebido ack: 3023059785
+Quant dados: 32767
+sampleRTT: 0.0075190067291259766
+EstimatedRTT: 0.0004062707187391376
+DevRTT: 0.003478767637958131
+Timeout: 0.014321341270571662
+-- Timer Pacote 3023059785 cancelado
+
+>>>>>>> Recebido ack: 3023092552
+Quant dados: 32767
+sampleRTT: 0.00043320655822753906
+EstimatedRTT: 0.0003609019608745897
+DevRTT: 0.0026271518778068353
+Timeout: 0.010869509472101932
+-- Timer Pacote 3023092552 cancelado
+
+>>>>>>> Recebido ack: 3023092553
+Quant dados: 1
+sampleRTT: 0.0004012584686279297
+EstimatedRTT: 0.00032080494662311507
+DevRTT: 0.00199047728885633
+Timeout: 0.008282714102048436
+-- Timer Pacote 3023092553 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 116421.49080948367
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3023125320 Timeout: 0.008282714102048436
+++ Timer Criado 3023158087 Timeout: 0.008282714102048436
+++ Timer Criado 3023158088 Timeout: 0.008282714102048436
+>>>>>>> Recebido ack: 3023125320
+Quant dados: 32767
+sampleRTT: 0.006648063659667969
+EstimatedRTT: 0.0003638051240410753
+DevRTT: 0.003063922600548971
+Timeout: 0.01261949552623696
+-- Timer Pacote 3023125320 cancelado
+
+>>>>>>> Recebido ack: 3023158087
+Quant dados: 32767
+sampleRTT: 0.00036072731018066406
+EstimatedRTT: 0.0003228385749131992
+DevRTT: 0.002307414134228594
+Timeout: 0.009552495111827576
+-- Timer Pacote 3023158087 cancelado
+
+>>>>>>> Recebido ack: 3023158088
+Quant dados: 1
+sampleRTT: 0.0004868507385253906
+EstimatedRTT: 0.00028856938728061667
+DevRTT: 0.0017801309384826393
+Timeout: 0.007409093141211173
+-- Timer Pacote 3023158088 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 125643.8112035508
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3023190855 Timeout: 0.007409093141211173
+++ Timer Criado 3023223622 Timeout: 0.007409093141211173
+++ Timer Criado 3023223623 Timeout: 0.007409093141211173
+>>>>>>> Recebido ack: 3023190855
+Quant dados: 32767
+sampleRTT: 0.006768226623535156
+EstimatedRTT: 0.00033710104666472907
+DevRTT: 0.0029428795980795865
+Timeout: 0.012108619438983075
+-- Timer Pacote 3023190855 cancelado
+
+>>>>>>> Recebido ack: 3023223622
+Quant dados: 32767
+sampleRTT: 0.0003771781921386719
+EstimatedRTT: 0.00029967814323337134
+DevRTT: 0.002226534710786015
+Timeout: 0.009205816986377431
+-- Timer Pacote 3023223622 cancelado
+
+>>>>>>> Recebido ack: 3023223623
+Quant dados: 1
+sampleRTT: 0.0003826618194580078
+EstimatedRTT: 0.00026700164807242504
+DevRTT: 0.001698816075935907
+Timeout: 0.007062265951816053
+-- Timer Pacote 3023223623 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 134189.2085352234
+Transmission Window size: 65535
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3023256390 Timeout: 0.007062265951816053
+++ Timer Criado 3023289157 Timeout: 0.007062265951816053
+++ Timer Criado 3023289158 Timeout: 0.007062265951816053
+
+rr Retransmission 3023256390
+rr ssthresh redefinido: 32767.5 Congestion window: 32767
+r++ Timer Retransmission 3023256390 
+
+>>>>>>> Recebido ack: 3023256390
+Quant dados: 32767
+sampleRTT: 0.01478123664855957
+EstimatedRTT: 0.0004183919001703666
+DevRTT: 0.004864823244049231
+Timeout: 0.01987768487636729
+-- Timer Pacote 3023256390 cancelado
+
+
+rr Retransmission 3023289157
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3023289157 
+
+
+rr Retransmission 3023289158
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3023289158 
+
+>>>>>>> Recebido ack: 3023289157
+Quant dados: 32767
+sampleRTT: 0.013754606246948242
+EstimatedRTT: 0.0005380254907359238
+DevRTT: 0.006952762622090003
+Timeout: 0.028349075979095938
+-- Timer Pacote 3023289157 cancelado
+
+>>>>>>> Recebido ack: 3023289158
+Quant dados: 1
+sampleRTT: 0.01375889778137207
+EstimatedRTT: 0.0006427585266610842
+DevRTT: 0.00849360678024525
+Timeout: 0.03461718564764208
+-- Timer Pacote 3023289158 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 65534.0
+Transmission Window size: 65534
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3023321925 Timeout: 0.03461718564764208
+++ Timer Criado 3023354692 Timeout: 0.03461718564764208
+>>>>>>> Recebido ack: 3023321925
+Quant dados: 32767
+sampleRTT: 0.008680105209350586
+EstimatedRTT: 0.0006709150259453311
+DevRTT: 0.00837250263103525
+Timeout: 0.03416092555008633
+-- Timer Pacote 3023321925 cancelado
+
+
+rr Retransmission 3023354692
+rr ssthresh redefinido: 32767.0 Congestion window: 32767
+r++ Timer Retransmission 3023354692 
+
+>>>>>>> Recebido ack: 3023354692
+Quant dados: 32767
+sampleRTT: 0.04226422309875488
+EstimatedRTT: 0.0011153534364366008
+DevRTT: 0.016566594388856007
+Timeout: 0.06738173099186062
+-- Timer Pacote 3023354692 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 65534
+Transmission Window size: 65534
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023387459 Timeout: 0.06738173099186062
+++ Timer Criado 3023420226 Timeout: 0.06738173099186062
+>>>>>>> Recebido ack: 3023387459
+Quant dados: 32767
+sampleRTT: 0.006443977355957031
+EstimatedRTT: 0.0010564839738314885
+DevRTT: 0.013771819137173392
+Timeout: 0.05614376052252506
+-- Timer Pacote 3023387459 cancelado
+
+>>>>>>> Recebido ack: 3023420226
+Quant dados: 32767
+sampleRTT: 0.0002562999725341797
+EstimatedRTT: 0.0009276272267592298
+DevRTT: 0.010496696166436307
+Timeout: 0.04291441189250446
+-- Timer Pacote 3023420226 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 81917.5
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023452993 Timeout: 0.04291441189250446
+++ Timer Criado 3023485760 Timeout: 0.04291441189250446
+++ Timer Criado 3023485761 Timeout: 0.04291441189250446
+>>>>>>> Recebido ack: 3023452993
+Quant dados: 32767
+sampleRTT: 0.007322072982788086
+EstimatedRTT: 0.0009031997356991771
+DevRTT: 0.009477240436599458
+Timeout: 0.038812161482097006
+-- Timer Pacote 3023452993 cancelado
+
+>>>>>>> Recebido ack: 3023485760
+Quant dados: 32767
+sampleRTT: 0.0003695487976074219
+EstimatedRTT: 0.0007949191287068727
+DevRTT: 0.0072142729102244564
+Timeout: 0.0296520107696047
+-- Timer Pacote 3023485760 cancelado
+
+>>>>>>> Recebido ack: 3023485761
+Quant dados: 1
+sampleRTT: 0.00037169456481933594
+EstimatedRTT: 0.0007002004196787553
+DevRTT: 0.005492831146383197
+Timeout: 0.022671525005211544
+-- Timer Pacote 3023485761 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 95024.3
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023518528 Timeout: 0.022671525005211544
+++ Timer Criado 3023551295 Timeout: 0.022671525005211544
+++ Timer Criado 3023551296 Timeout: 0.022671525005211544
+>>>>>>> Recebido ack: 3023518528
+Quant dados: 32767
+sampleRTT: 0.006683349609375
+EstimatedRTT: 0.0006962172373360984
+DevRTT: 0.005616406452797124
+Timeout: 0.023161843048524592
+-- Timer Pacote 3023518528 cancelado
+
+>>>>>>> Recebido ack: 3023551295
+Quant dados: 32767
+sampleRTT: 0.0003516674041748047
+EstimatedRTT: 0.0006135859252212712
+DevRTT: 0.004277784469859459
+Timeout: 0.017724723804659108
+-- Timer Pacote 3023551295 cancelado
+
+>>>>>>> Recebido ack: 3023551296
+Quant dados: 1
+sampleRTT: 0.0003306865692138672
+EstimatedRTT: 0.0005410212666837857
+DevRTT: 0.0032609220267620738
+Timeout: 0.01358470937373208
+-- Timer Pacote 3023551296 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 106323.26551724138
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023584063 Timeout: 0.01358470937373208
+++ Timer Criado 3023616830 Timeout: 0.01358470937373208
+++ Timer Criado 3023616831 Timeout: 0.01358470937373208
+>>>>>>> Recebido ack: 3023584063
+Quant dados: 32767
+sampleRTT: 0.00860905647277832
+EstimatedRTT: 0.0005810068142580414
+DevRTT: 0.004452703934701625
+Timeout: 0.01839182255306454
+-- Timer Pacote 3023584063 cancelado
+
+>>>>>>> Recebido ack: 3023616830
+Quant dados: 32767
+sampleRTT: 0.00039267539978027344
+EstimatedRTT: 0.0005132894049730397
+DevRTT: 0.0033696814523244104
+Timeout: 0.013992015214270681
+-- Timer Pacote 3023616830 cancelado
+
+>>>>>>> Recebido ack: 3023616831
+Quant dados: 1
+sampleRTT: 0.0004036426544189453
+EstimatedRTT: 0.00045417376253164654
+DevRTT: 0.002539893866271483
+Timeout: 0.010613749227617578
+-- Timer Pacote 3023616831 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 116421.49080948367
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023649598 Timeout: 0.010613749227617578
+++ Timer Criado 3023682365 Timeout: 0.010613749227617578
+++ Timer Criado 3023682366 Timeout: 0.010613749227617578
+>>>>>>> Recebido ack: 3023649598
+Quant dados: 32767
+sampleRTT: 0.007463216781616211
+EstimatedRTT: 0.0004906922519853933
+DevRTT: 0.0036480515321113166
+Timeout: 0.01508289838043066
+-- Timer Pacote 3023649598 cancelado
+
+>>>>>>> Recebido ack: 3023682365
+Quant dados: 32767
+sampleRTT: 0.0004119873046875
+EstimatedRTT: 0.00043450556179581285
+DevRTT: 0.002741668213360566
+Timeout: 0.011401178415238076
+-- Timer Pacote 3023682365 cancelado
+
+>>>>>>> Recebido ack: 3023682366
+Quant dados: 1
+sampleRTT: 0.00038552284240722656
+EstimatedRTT: 0.0003850114021014266
+DevRTT: 0.0020563790200968744
+Timeout: 0.008610527482488924
+-- Timer Pacote 3023682366 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 125643.8112035508
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023715133 Timeout: 0.008610527482488924
+++ Timer Criado 3023747900 Timeout: 0.008610527482488924
+++ Timer Criado 3023747901 Timeout: 0.008610527482488924
+>>>>>>> Recebido ack: 3023715133
+Quant dados: 32767
+sampleRTT: 0.007506132125854492
+EstimatedRTT: 0.00043071162841192944
+DevRTT: 0.0033111393894332966
+Timeout: 0.013675269186145115
+-- Timer Pacote 3023715133 cancelado
+
+>>>>>>> Recebido ack: 3023747900
+Quant dados: 32767
+sampleRTT: 0.0005481243133544922
+EstimatedRTT: 0.0003837242287773694
+DevRTT: 0.0025244545632192535
+Timeout: 0.010481542481654383
+-- Timer Pacote 3023747900 cancelado
+
+>>>>>>> Recebido ack: 3023747901
+Quant dados: 1
+sampleRTT: 0.0004911422729492188
+EstimatedRTT: 0.00034189797859206347
+DevRTT: 0.0019306519960037292
+Timeout: 0.00806450596260698
+-- Timer Pacote 3023747901 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 134189.2085352234
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023780668 Timeout: 0.00806450596260698
+++ Timer Criado 3023813435 Timeout: 0.00806450596260698
+++ Timer Criado 3023813436 Timeout: 0.00806450596260698
+>>>>>>> Recebido ack: 3023780668
+Quant dados: 32767
+sampleRTT: 0.0067920684814453125
+EstimatedRTT: 0.00038406158728612196
+DevRTT: 0.003049990720542594
+Timeout: 0.012584024469456499
+-- Timer Pacote 3023780668 cancelado
+
+>>>>>>> Recebido ack: 3023813435
+Quant dados: 32767
+sampleRTT: 0.00032806396484375
+EstimatedRTT: 0.0003401546884359036
+DevRTT: 0.0022905157213049844
+Timeout: 0.009502217573655842
+-- Timer Pacote 3023813435 cancelado
+
+>>>>>>> Recebido ack: 3023813436
+Quant dados: 1
+sampleRTT: 0.0003457069396972656
+EstimatedRTT: 0.0003019566891276315
+DevRTT: 0.0017288243536211468
+Timeout: 0.007217254103612219
+-- Timer Pacote 3023813436 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 142190.42041149864
+Transmission Window size: 65535
+ssthresh 32767.0
+Last error size 65534.0 
+
+++ Timer Criado 3023846203 Timeout: 0.007217254103612219
+++ Timer Criado 3023878970 Timeout: 0.007217254103612219
+++ Timer Criado 3023878971 Timeout: 0.007217254103612219
+
+rr Retransmission 3023846203
+rr ssthresh redefinido: 32767.5 Congestion window: 32767
+r++ Timer Retransmission 3023846203 
+
+>>>>>>> Recebido ack: 3023878970
+Quant dados: 65534
+sampleRTT: 0.006613969802856445
+EstimatedRTT: 0.00034688672552238314
+DevRTT: 0.0028633890345493756
+Timeout: 0.011800442863719885
+-- Timer Pacote 3023846203 cancelado
+-- Timer Pacote 3023878970 cancelado
+
+>>>>>>> Recebido ack: 3023878971
+Quant dados: 1
+sampleRTT: 0.006594181060791016
+EstimatedRTT: 0.0003859531480919729
+DevRTT: 0.0036995987540867923
+Timeout: 0.015184348164439141
+-- Timer Pacote 3023878971 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 65534
+Transmission Window size: 65534
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3023911738 Timeout: 0.015184348164439141
+++ Timer Criado 3023944505 Timeout: 0.015184348164439141
+>>>>>>> Recebido ack: 3023911738
+Quant dados: 32767
+sampleRTT: 0.007619619369506836
+EstimatedRTT: 0.00043295424669931174
+DevRTT: 0.004571365346266976
+Timeout: 0.018718415631767217
+-- Timer Pacote 3023911738 cancelado
+
+>>>>>>> Recebido ack: 3023944505
+Quant dados: 32767
+sampleRTT: 0.0003402233123779297
+EstimatedRTT: 0.0003830877572666219
+DevRTT: 0.003439240120922405
+Timeout: 0.014140048240956242
+-- Timer Pacote 3023944505 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 81917.5
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3023977272 Timeout: 0.014140048240956242
+++ Timer Criado 3024010039 Timeout: 0.014140048240956242
+++ Timer Criado 3024010040 Timeout: 0.014140048240956242
+>>>>>>> Recebido ack: 3023977272
+Quant dados: 32767
+sampleRTT: 0.009372472763061523
+EstimatedRTT: 0.0004523576971465632
+DevRTT: 0.004809458857170544
+Timeout: 0.019690193125828738
+-- Timer Pacote 3023977272 cancelado
+
+>>>>>>> Recebido ack: 3024010039
+Quant dados: 32767
+sampleRTT: 0.00034689903259277344
+EstimatedRTT: 0.0004001492229106525
+DevRTT: 0.0036204066904573775
+Timeout: 0.014881775984740163
+-- Timer Pacote 3024010039 cancelado
+
+>>>>>>> Recebido ack: 3024010040
+Quant dados: 1
+sampleRTT: 0.0002865791320800781
+EstimatedRTT: 0.0003537128091978219
+DevRTT: 0.002732088437122469
+Timeout: 0.011282066557687698
+-- Timer Pacote 3024010040 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 95024.3
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024042807 Timeout: 0.011282066557687698
+++ Timer Criado 3024075574 Timeout: 0.011282066557687698
+++ Timer Criado 3024075575 Timeout: 0.011282066557687698
+>>>>>>> Recebido ack: 3024042807
+Quant dados: 32767
+sampleRTT: 0.006705522537231445
+EstimatedRTT: 0.00039331773976348725
+DevRTT: 0.0036271175272088413
+Timeout: 0.014901787848598852
+-- Timer Pacote 3024042807 cancelado
+
+>>>>>>> Recebido ack: 3024075574
+Quant dados: 32767
+sampleRTT: 0.0004258155822753906
+EstimatedRTT: 0.00034947571707149373
+DevRTT: 0.002739423111707605
+Timeout: 0.011307168163901914
+-- Timer Pacote 3024075574 cancelado
+
+>>>>>>> Recebido ack: 3024075575
+Quant dados: 1
+sampleRTT: 0.0004296302795410156
+EstimatedRTT: 0.0003111616309318197
+DevRTT: 0.0020841844959330028
+Timeout: 0.00864789961466383
+-- Timer Pacote 3024075575 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 106323.26551724138
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024108342 Timeout: 0.00864789961466383
+++ Timer Criado 3024141109 Timeout: 0.00864789961466383
+++ Timer Criado 3024141110 Timeout: 0.00864789961466383
+>>>>>>> Recebido ack: 3024108342
+Quant dados: 32767
+sampleRTT: 0.007438182830810547
+EstimatedRTT: 0.00036524371245047406
+DevRTT: 0.0033313731515397706
+Timeout: 0.013690736318609557
+-- Timer Pacote 3024108342 cancelado
+
+>>>>>>> Recebido ack: 3024141109
+Quant dados: 32767
+sampleRTT: 0.0004444122314453125
+EstimatedRTT: 0.0003251434012872312
+DevRTT: 0.0025283470711943484
+Timeout: 0.010438531686064624
+-- Timer Pacote 3024141109 cancelado
+
+>>>>>>> Recebido ack: 3024141110
+Quant dados: 1
+sampleRTT: 0.00037598609924316406
+EstimatedRTT: 0.0002892003023668669
+DevRTT: 0.0019179567526148356
+Timeout: 0.00796102731282621
+-- Timer Pacote 3024141110 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 116421.49080948367
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024173877 Timeout: 0.00796102731282621
+++ Timer Criado 3024206644 Timeout: 0.00796102731282621
+++ Timer Criado 3024206645 Timeout: 0.00796102731282621
+>>>>>>> Recebido ack: 3024173877
+Quant dados: 32767
+sampleRTT: 0.007882118225097656
+EstimatedRTT: 0.00035157674238472925
+DevRTT: 0.0033211029351393586
+Timeout: 0.013635988482942164
+-- Timer Pacote 3024173877 cancelado
+
+>>>>>>> Recebido ack: 3024206644
+Quant dados: 32767
+sampleRTT: 0.00037360191345214844
+EstimatedRTT: 0.00031229967350478996
+DevRTT: 0.0025061527613413587
+Timeout: 0.010336910718870225
+-- Timer Pacote 3024206644 cancelado
+
+>>>>>>> Recebido ack: 3024206645
+Quant dados: 1
+sampleRTT: 0.00038242340087890625
+EstimatedRTT: 0.00027804250682767753
+DevRTT: 0.001905709794518826
+Timeout: 0.007900881684902982
+-- Timer Pacote 3024206645 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 125643.8112035508
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024239412 Timeout: 0.007900881684902982
+++ Timer Criado 3024272179 Timeout: 0.007900881684902982
+++ Timer Criado 3024272180 Timeout: 0.007900881684902982
+>>>>>>> Recebido ack: 3024239412
+Quant dados: 32767
+sampleRTT: 0.006674766540527344
+EstimatedRTT: 0.00032672177523080965
+DevRTT: 0.003016293537213253
+Timeout: 0.012391895924083822
+-- Timer Pacote 3024239412 cancelado
+
+>>>>>>> Recebido ack: 3024272180
+Quant dados: 32768
+sampleRTT: 0.0003237724304199219
+EstimatedRTT: 0.00028992870870720746
+DevRTT: 0.002270681083338118
+Timeout: 0.00937265304205968
+-- Timer Pacote 3024272179 cancelado
+-- Timer Pacote 3024272180 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 134189.2085352234
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024304947 Timeout: 0.00937265304205968
+++ Timer Criado 3024337714 Timeout: 0.00937265304205968
+++ Timer Criado 3024337715 Timeout: 0.00937265304205968
+>>>>>>> Recebido ack: 3024337714
+Quant dados: 65534
+sampleRTT: 0.0004489421844482422
+EstimatedRTT: 0.0002592993974244095
+DevRTT: 0.001750421509259547
+Timeout: 0.007260985434462597
+-- Timer Pacote 3024304947 cancelado
+-- Timer Pacote 3024337714 cancelado
+
+>>>>>>> Recebido ack: 3024337715
+Quant dados: 1
+sampleRTT: 0.0004582405090332031
+EstimatedRTT: 0.00023261497910927336
+DevRTT: 0.0013692225144256425
+Timeout: 0.005709505036811844
+-- Timer Pacote 3024337715 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 142190.42041149864
+Transmission Window size: 65535
+ssthresh 32767.5
+Last error size 142190.42041149864 
+
+++ Timer Criado 3024370482 Timeout: 0.005709505036811844
+++ Timer Criado 3024403249 Timeout: 0.005709505036811844
+++ Timer Criado 3024403250 Timeout: 0.005709505036811844
+
+rr Retransmission 3024370482
+rr ssthresh redefinido: 32767.5 Congestion window: 32767
+r++ Timer Retransmission 3024370482 
+
+
+rr Retransmission 3024403249
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3024403249 
+
+
+rr Retransmission 3024403250
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3024403250 
+
+>>>>>>> Recebido ack: 3024403249
+Quant dados: 65534
+sampleRTT: 0.019288301467895508
+EstimatedRTT: 0.00044464187506930804
+DevRTT: 0.005737831784025782
+Timeout: 0.023395969011172437
+-- Timer Pacote 3024370482 cancelado
+-- Timer Pacote 3024403249 cancelado
+
+>>>>>>> Recebido ack: 3024403250
+Quant dados: 1
+sampleRTT: 0.019330978393554688
+EstimatedRTT: 0.0006306988706050781
+DevRTT: 0.00897844371875674
+Timeout: 0.03654447374563204
+-- Timer Pacote 3024403250 cancelado
+
+
+Send Window size: 65535
+Congestion Window size: 65534.0
+Transmission Window size: 65534
+ssthresh 16383.5
+Last error size 32767 
+
+++ Timer Criado 3024436017 Timeout: 0.03654447374563204
+++ Timer Criado 3024450636 Timeout: 0.03654447374563204
+>>>>>>> Recebido ack: 3024436017
+Quant dados: 32767
+sampleRTT: 0.007321834564208984
+EstimatedRTT: 0.0006433844438320556
+DevRTT: 0.008403445319161788
+Timeout: 0.03425716572047921
+-- Timer Pacote 3024436017 cancelado
+
+
+rr Retransmission 3024450636
+rr ssthresh redefinido: 32767.0 Congestion window: 32767
+r++ Timer Retransmission 3024450636 
+
+>>>>>>> Recebido ack: 3024450636
+Quant dados: 14619
+sampleRTT: 0.04485440254211426
+EstimatedRTT: 0.0011236414201294769
+DevRTT: 0.017235274269867536
+Timeout: 0.07006473849959963
+-- Timer Pacote 3024450636 cancelado
+
+______ Fim da fila de envio e retrasmissoes. Envio de FIN
+Servidor rodando em: http://127.0.0.1:8080
+
+/\/\ Nova Conexão: 127.0.0.1:45364 -> 127.0.0.1:8080 (seq=3132506267, ack=1549696996) /\/\
+Conexao estabelecida...
+
+sampleRTT: 0.00024390220642089844
+EstimatedRTT: 1.7500030487775802
+DevRTT: 0.4374397866427898
+Timeout: 3.4997621953487394
+GET /
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 3132506600 Timeout: 3.4997621953487394
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 3132506600
+Quant dados: 332
+/\/\ Nova Conexão: 127.0.0.1:45366 -> 127.0.0.1:8080 (seq=1674538186, ack=651484945) /\/\
+Conexao estabelecida...
+
+sampleRTT: 0.00022268295288085938
+EstimatedRTT: 1.750002783536911
+DevRTT: 0.4374450251460075
+Timeout: 3.499782884120941
+GET /style.css
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 1674539014 Timeout: 3.499782884120941
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 1674539014
+Quant dados: 827
+/\/\ Nova Conexão: 127.0.0.1:45370 -> 127.0.0.1:8080 (seq=284105515, ack=3882070801) /\/\
+Conexao estabelecida...
+
+sampleRTT: 0.00019049644470214844
+EstimatedRTT: 1.7500023812055587
+DevRTT: 0.43745297119021415
+Timeout: 3.4998142659664153
+GET /favicon.ico
+404 Not Found
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 284105576 Timeout: 3.4998142659664153
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 284105576
+Quant dados: 60
+/\/\ Nova Conexão: 127.0.0.1:45372 -> 127.0.0.1:8080 (seq=444330112, ack=262826211) /\/\
+Conexao estabelecida...
+
+sampleRTT: 0.00022077560424804688
+EstimatedRTT: 1.7500027596950531
+DevRTT: 0.4374454960227013
+Timeout: 3.4997847437858582
+GET /image.jpg
+200 OK
+
+Send Window size: 43690
+Congestion Window size: 32767
+Transmission Window size: 32767
+ssthresh 65536
+Last error size 65536 
+
+++ Timer Criado 444362880 Timeout: 3.4997847437858582
+
+XX Fechamento de conexão solicitada pela aplicação
+
+>>>>>>> Recebido ack: 444362880
+Quant dados: 32767
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+
+rr Retransmission 444362880
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 444362880 
+
+
+rr Retransmission 3132506600
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 3132506600 
+
+
+rr Retransmission 1674539014
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 1674539014 
+
+
+rr Retransmission 284105576
+rr ssthresh redefinido: 16383.5 Congestion window: 32767
+r++ Timer Retransmission 284105576 
+
+Servidor rodando em: http://127.0.0.1:8080
+
