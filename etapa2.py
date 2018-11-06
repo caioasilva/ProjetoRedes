@@ -1,18 +1,19 @@
 #!/usr/bin/python3
-#
-# Antes de usar, execute o seguinte comando para evitar que o Linux feche
-# as conexoes TCP abertas por este programa:
-#
-# sudo iptables -I OUTPUT -p tcp --tcp-flags RST RST -j DROP
-#
-import asyncio
-import socket
-import struct
-import os
-import time
-from app import HTTPServer
-
+# -*- encoding: utf-8 -*-
 '''
+Antes de usar, execute o seguinte comando para evitar que o Linux feche
+as conexoes TCP abertas por este programa:
+
+sudo iptables -I OUTPUT -p tcp --tcp-flags RST RST -j DROP
+
+# Projeto para a disciplina de Redes de Computadores
+CCO-130 / 21237 - DC/UFSCar
+
+- Caio Augusto Silva
+- Luís Felipe Tomazini
+- Mateus Barros
+- Antonio Lopes
+
 Tarefas:
 OK  Estabelecer conexão (handshake SYN, SYN+ACK, ACK) com número de sequência inicial aleatório.
 OK  Transmitir e receber corretamente os segmentos. (Transmissão OK)
@@ -23,6 +24,13 @@ OK  Tratar e informar corretamente o campo window size, implementando controle d
 OK  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
 OK  Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
 '''
+
+import asyncio
+import socket
+import struct
+import os
+import time
+from app import HTTPServer
 
 FLAGS_FIN = 1 << 0  # Fim de conexao
 FLAGS_SYN = 1 << 1  # Sicronizacao
@@ -35,9 +43,7 @@ FLAGS_SYNACK = FLAGS_ACK | FLAGS_SYN
 PORT = 8080  # Porta utilizada
 FILES_DIR = "www"  # Pasta do servidor HTTP
 
-# MSS = 1460  # Maximum Segment Size
 MSS = 16384  # Maximum Segment Size
-SSTHRESH = 100 # Determines wheter slow start or congestion avoidance algorithm is used
 
 class TCP_Socket:
     # Lista static de conexões abertas
