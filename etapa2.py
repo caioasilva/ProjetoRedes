@@ -21,8 +21,7 @@ OK  Estimar o timeout para retransmissão de acordo com as recomendações do li
 ?   Implementar a semântica para timeout e ACKs duplos de acordo com as recomendações do livro-texto.
 OK  Tratar e informar corretamente o campo window size, implementando controle de fluxo.
 OK  Realizar controle de congestionamento de acordo com as recomendações do livro-texto (RFC 5681).
-OK Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
-    Acho que nao ta certo
+OK  Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
 '''
 
 FLAGS_FIN = 1 << 0  # Fim de conexao
@@ -63,6 +62,7 @@ class TCP_Socket:
         # Fila de envio
         self.send_queue = b""
         self.sent_bytes_not_ack = 0
+        self.duplicate_count = 0
 
         # Timer
         self.packet_timers = {}
@@ -134,9 +134,7 @@ class TCP_Socket:
             if (packet.flags & FLAGS_FIN) == FLAGS_FIN:
                 conexao.flag_fin_recv = True
                 conexao.fin_recv(packet)
-            # elif len(conexao.packet_timers) == 0 and conexao.flag_close_connection:
-            #     conexao.send_segment(conexao.make_tcp_packet(FLAGS_FIN))
-            #     conexao.next_seq_no += 1
+
             if (packet.flags & FLAGS_ACK) == FLAGS_ACK:
                 # Recebe e processa pacote ACK
                 conexao.ack_recv(packet)
@@ -166,6 +164,9 @@ class TCP_Socket:
 
         # Adicionando current time do seq_no enviado
         self.packet_time[self.next_seq_no] = time.time()
+
+
+
 
     def close(self):
         # Flag que avisa intenção do app de fechar conexão
@@ -277,6 +278,7 @@ class TCP_Socket:
                 print("Quant dados faltando ACK: ", self.sent_bytes_not_ack)
 
                 # ajusta janela
+                self.send_window_size = self.ssthresh
                 # slow start
                 if self.congestion_window <= self.ssthresh and self.transmission_window() <= self.lasterror_congestion_window / 2:
                     # duplica a congestion window após o recebimento de todos os ack
@@ -293,6 +295,7 @@ class TCP_Socket:
 
                 timer_list = list(self.packet_timers.keys())
                 if ack_no in timer_list:
+                    self.duplicate_count = 0
                     for key in timer_list:
                         if key <= ack_no:
                             self.packet_timers[key].cancel()
@@ -300,9 +303,18 @@ class TCP_Socket:
                             print("-- Timer Pacote", key, "cancelado")
                 else:
                     print("\nddd ACK DUPLICADO", ack_no)
+                    # Fast Retransmit/Fast Recovery
+                    self.duplicate_count += 1
+                    if self.duplicate_count < 3:
+                        self.transmission_window = self.send_window_size + int(MSS * 2)
+                    elif self.duplicate_count == 3:
+                        self.ssthresh = max(int(self.transmission_window()/2), int(MSS * 2))
+                        print("ssthresh redefinido", self.ssthresh, "\n")
+                        self.send_window_size = self.ssthresh + int(MSS * 3)
+                    else:
+                        self.send_window_size += int(MSS * 1)
                     self.lasterror_congestion_window = self.congestion_window
-                    self.ssthresh = max(self.transmission_window() / 2, MSS * 2)
-                    print("ssthresh redefinido", self.ssthresh, "\n")
+                    # self.ssthresh = int(self.transmission_window()/2)
                 print("")
 
                 # Se todos os acks chegaram
@@ -328,7 +340,7 @@ class TCP_Socket:
             self.close()
         else:
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
-
+            self.send_segment(self.make_tcp_packet(FLAGS_ACK))
 
 class IPv4_TCP:
 
