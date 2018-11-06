@@ -21,7 +21,7 @@ class HTTPServer:
                         resp = header + bin
                         print("200 OK")
                     else:
-                        bin = b"File not found"
+                        bin = b"File not found\r\n"
                         header = b"HTTP/1.0 404 Not Found\r\nContent-Length: %d\r\n\r\n" % len(bin)
                         resp = header + bin
                         print("404 Not Found")
@@ -37,7 +37,7 @@ class HTTPServer:
 
     @staticmethod
     def badRequest():
-        bin = b"Bad Request"
+        bin = b"Bad Request\r\n"
         header = b"HTTP/1.0 400 Bad Request\r\nContent-Length: %d\r\n\r\n" % len(bin)
         resp = header + bin
         print("400 Bad Request")
