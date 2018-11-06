@@ -63,6 +63,7 @@ class TCP_Socket:
         # Fila de envio
         self.send_queue = b""
         self.sent_bytes_not_ack = 0
+        self.duplicate_count = 0
 
         # Timer
         self.packet_timers = {}
@@ -266,6 +267,7 @@ class TCP_Socket:
                 print("Quant dados faltando ACK: ", self.sent_bytes_not_ack)
 
                 # ajusta janela
+                self.send_window_size = self.ssthresh
                 # slow start
                 if self.congestion_window <= self.ssthresh and self.transmission_window() <= self.lasterror_congestion_window / 2:
                     # duplica a congestion window após o recebimento de todos os ack
@@ -282,6 +284,7 @@ class TCP_Socket:
 
                 timer_list = list(self.packet_timers.keys())
                 if ack_no in timer_list:
+                    self.duplicate_count = 0
                     for key in timer_list:
                         if key <= ack_no:
                             self.packet_timers[key].cancel()
@@ -289,9 +292,18 @@ class TCP_Socket:
                             print("-- Timer Pacote", key, "cancelado")
                 else:
                     print("\nddd ACK DUPLICADO", ack_no)
+                    # Fast Retransmit/Fast Recovery
+                    self.duplicate_count += 1
+                    if self.duplicate_count < 3:
+                        self.transmission_window = send_window_size + int(MSS * 2)
+                    elif self.duplicate_count == 3:
+                        self.ssthresh = max(int(self.transmission_window()/2), int(MSS * 2))
+                        print("ssthresh redefinido", self.ssthresh, "\n")
+                        self.send_window_size = self.ssthresh + int(MSS * 3)
+                    else:
+                        self.send_window_size += int(MSS * 1)
                     self.lasterror_congestion_window = self.congestion_window
-                    self.ssthresh = int(self.transmission_window()/2)
-                    print("ssthresh redefinido", self.ssthresh, "\n")
+                    # self.ssthresh = int(self.transmission_window()/2)
                 print("")
 
                 # Se todos os acks chegaram
@@ -316,7 +328,7 @@ class TCP_Socket:
             self.close()
         else:
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
-
+            self.send_segment(self.make_tcp_packet(FLAGS_ACK))
 
 class IPv4_TCP:
 
