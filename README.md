@@ -26,6 +26,14 @@ Implementar o protocolo TCP. Deverão ser implementados e exercitados (testar e 
 - Fechar a conexão de forma limpa (lidando corretamente com a flag FIN).
 
 ### Como usar
-Executar o script "etapa1.py"
+Antes de usar, execute o seguinte comando para evitar que o Linux feche
+as conexoes TCP abertas por este programa:
+
+    sudo iptables -I OUTPUT -p tcp --tcp-flags RST RST -j DROP
+
+Executar através do comando:
+
+    sudo python3 etapa2.py
+    
 O servidor HTTP sera iniciado na porta 8080
 È recomendada autilização do Wireshark para monitorar o tráfego de pacotes.
