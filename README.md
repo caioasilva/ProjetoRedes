@@ -37,3 +37,31 @@ Executar através do comando:
     
 O servidor HTTP sera iniciado na porta 8080
 È recomendada autilização do Wireshark para monitorar o tráfego de pacotes.
+
+## Etapa 3
+Implementação da camada de rede.
+Foram exercitados os seguintes aspectos:
+- Interpretação de cabeçalhos IP.
+- Reconstrução de datagramas IP fragmentados.
+
+### Como usar
+Executar através do comando:
+
+    sudo python3 etapa3.py
+
+Ele disparará pings para o endereço especificado em dest_addr e interpretará os pacotes recebidos, também reconstruindo-os.
+
+## Etapa 4
+Interpretação da Camada de Enlace
+
+O código da Etapa 3 foi modificado e está sendo realizado o seguinte:
+
+- Verificar se o endereço MAC de destino de cada quadro recebido é o MAC da sua placa de rede;
+- Verificar se o protocolo encapsulado dentro do quadro recebido é o protocolo IP,
+- Caso ambas as condições acima sejam satisfeitas, repassar o conteúdo encapsulado (datagrama IP) para uma função que lide com o processamento na camada de rede, por exemplo a função implementada na Etapa 3.
+
+### Como usar
+Executar através do comando:
+
+    sudo python3 etapa4.py
+
