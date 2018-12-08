@@ -31,6 +31,7 @@ import struct
 import os
 import time
 from app import HTTPServer
+import etapa4
 
 FLAGS_FIN = 1 << 0  # Fim de conexao
 FLAGS_SYN = 1 << 1  # Sicronizacao
@@ -43,7 +44,7 @@ FLAGS_SYNACK = FLAGS_ACK | FLAGS_SYN
 PORT = 8080  # Porta utilizada
 FILES_DIR = "www"  # Pasta do servidor HTTP
 
-MSS = 16384  # Maximum Segment Size
+MSS = 1400  # Maximum Segment Size
 TIMEOUT = 9 * 60  # segundos
 
 
@@ -52,7 +53,7 @@ class TCP_Socket:
     open_conns = {}
 
     # Construtor Conexão
-    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, seq_no, ack_no, send_window_size=MSS):
+    def __init__(self, fd, src_addr, src_port, dst_addr, dst_port, mac, app, seq_no, ack_no, send_window_size=MSS):
         # Identificador da conexao
         self.id_conn = self.generate_id(src_addr, src_port, dst_addr, dst_port)
 
@@ -61,6 +62,8 @@ class TCP_Socket:
         self.src_port = src_port  # Porta Origem
         self.dst_addr = dst_addr  # Endereço Destino
         self.dst_port = dst_port  # Porta Destino
+        self.dest_mac = mac
+        self.app = app
         self.ack_no = ack_no  # Controle do envio de ack_no
         self.seq_no_base = seq_no  # Controle de recebimento de ack_no
         self.next_seq_no = seq_no  # Controle de envio de seq_no
@@ -117,10 +120,15 @@ class TCP_Socket:
 
     # Metodo chamado no loop principal para receber os dados do socket
     @staticmethod
-    def raw_recv(fd):
-        # Recebe um pacote do socket
-        src_addr, dst_addr, segment = IPv4_TCP.handle_ipv4_header(fd.recv(12000))
+    def raw_recv(fd, ip_pack, mac, app):
+
+        # Recebe um pacote da camada de cima
+        src_addr = etapa4.IP.addr2str(ip_pack.src_ip)
+        dst_addr = etapa4.IP.addr2str(ip_pack.dest_ip)
+        segment = ip_pack.payload
+        # src_addr, dst_addr, segment = IPv4_TCP.handle_ipv4_header(fd.recv(12000))
         packet = IPv4_TCP(src_addr, dst_addr, segment)
+
 
         # Aceita somente a porta 7000
         if packet.dst_port != PORT:
@@ -132,7 +140,7 @@ class TCP_Socket:
         # Identificacao das flags
         # Conexao requerida e aceita
         if (packet.flags & FLAGS_SYN) == FLAGS_SYN:
-            conexao = TCP_Socket(fd, packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port,
+            conexao = TCP_Socket(fd, packet.src_addr, packet.src_port, packet.dst_addr, packet.dst_port, mac, app,
                                  struct.unpack('I', os.urandom(4))[0], packet.seq_no + 1, packet.window_size)
             conexao.send_segment(conexao.make_tcp_packet(FLAGS_SYNACK))
             conexao.next_seq_no += 1
@@ -198,8 +206,9 @@ class TCP_Socket:
                            (5 << 12) | flags, self.recv_window_size, 0, 0)
 
     def send_segment(self, segment):
-        self.fd.sendto(IPv4_TCP(self.src_addr, self.dst_addr, segment).fix_checksum().packet,
-                       (self.src_addr, self.src_port))
+        # self.fd.sendto(IPv4_TCP(self.src_addr, self.dst_addr, segment).fix_checksum().packet,
+        #                (self.src_addr, self.src_port))
+        etapa4.send_ip(self.fd, self.dest_mac, self.src_addr, self.dst_addr, IPv4_TCP(self.src_addr, self.dst_addr, segment).fix_checksum().packet, 0x06)
 
     def send(self, total_payload=b''):
         self.send_queue += total_payload
@@ -358,7 +367,7 @@ class TCP_Socket:
         if self.ack_no == packet_tcp.seq_no:
             self.ack_no += len(packet_tcp.payload)
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
-            self.send(app.request(packet_tcp.payload))
+            self.send(self.app.request(packet_tcp.payload))
             self.close()
         else:
             self.send_segment(self.make_tcp_packet(FLAGS_ACK))
@@ -391,10 +400,12 @@ class IPv4_TCP:
 
     @staticmethod
     def str2addr(addr):
+        print(addr)
         return bytes(int(x) for x in addr.split('.'))
 
     def fix_checksum(self):
         # Endereco de origem | Endereco de destino | formato, Identificador TCP, Tamanho do segmento
+
         pseudohdr = self.str2addr(self.src_addr) + self.str2addr(self.dst_addr) + struct.pack('!HH', 0x0006,
                                                                                               len(self.segment))
         seg = bytearray(self.segment)

@@ -15,6 +15,7 @@ Etapa 4
 import socket
 import asyncio
 import struct
+import etapa2
 
 ETH_P_ALL = 0x0003
 ETH_P_IP = 0x0800
@@ -34,7 +35,7 @@ if_name = 'wlp2s0'
 dest_mac = '5c:96:9d:6d:bb:b6'
 
 # Coloque aqui o endereço MAC da sua placa de rede (ip link show dev wlan0)
-my_mac = '5c:c9:d3:62:25:3e'
+my_mac = '5c:c9:d3:63:27:3e'
 
 
 payload =   b'\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46\x00\x01\x01\x01\x00\x48' \
@@ -291,14 +292,6 @@ class IP:
         return ".".join(map(lambda n: str(ip >> n & 0xFF), [24, 16, 8, 0]))
 
 
-def send_ping(send_fd):
-    print('enviando ping')
-    # Exemplo de pacote ping (ICMP echo request) com payload grande
-    msg = bytearray(b"\x08\x00\x00\x00" + payload)
-    msg[2:4] = struct.pack('!H', calc_checksum(msg))
-    send_fd.sendto(msg, (dest_ip, 0))
-
-    asyncio.get_event_loop().call_later(1, send_ping, send_fd)
 
 def mac_addr_to_bytes(addr):
     return bytes(int('0x'+s, 16) for s in addr.split(':'))
@@ -306,22 +299,23 @@ def mac_addr_to_bytes(addr):
 def mac_addr_to_str(mac):
     return ':'.join('%02x' % b for b in mac)
 
-def send_eth(fd, datagram, protocol):
-    eth_header = mac_addr_to_bytes(dest_mac) + \
-        mac_addr_to_bytes(src_mac) + \
+def send_eth(fd, mac, datagram, protocol):
+    eth_header = mac_addr_to_bytes(mac) + \
+        mac_addr_to_bytes(my_mac) + \
         struct.pack('!H', protocol)
     fd.send(eth_header + datagram)
+    print(">>>>>>>> Enviado para ", mac)
 
 
 def ip_addr_to_bytes(addr):
     return bytes(map(int, addr.split('.')))
 
 ip_pkt_id = 0
-def send_ip(fd, msg, protocol):
+def send_ip(fd, mac, dest_ip, src_ip, payload, protocol):
     global ip_pkt_id
     ip_header = bytearray(struct.pack('!BBHHHBBH',
                             0x45, 0,
-                            20 + len(msg),
+                            20 + len(payload),
                             ip_pkt_id,
                             0,
                             15,
@@ -331,22 +325,23 @@ def send_ip(fd, msg, protocol):
                           ip_addr_to_bytes(dest_ip))
     ip_header[10:12] = struct.pack('!H', calc_checksum(ip_header))
     ip_pkt_id += 1
-    send_eth(fd, ip_header + msg, ETH_P_IP)
+    send_eth(fd, mac, ip_header + payload, ETH_P_IP)
+    print(">>>> Enviando Pacote IP para", dest_ip)
 
 
-def raw_recv(fd):
+def raw_recv(fd, app):
     frame = fd.recv(12000)
     packet_dest_mac, packet_src_mac, protocol = struct.unpack("!6s 6s H", frame[:14])
     if mac_addr_to_str(packet_dest_mac) == my_mac:
-        print("Frame recebido com mac ", my_mac)
+        print("Frame recebido com mac ", my_mac, 'de', mac_addr_to_str(packet_src_mac))
         # print(mac_addr_to_str(packet_dest_mac))
         if protocol == ETH_P_IP:
             print("Pacote do tipo IP")
-            ip_recv(frame[14:])
+            ip_recv(fd, mac_addr_to_str(packet_src_mac), frame[14:], app)
 
 
 
-def ip_recv(packet):
+def ip_recv(fd, mac, packet, app):
     ip_packet = IP(packet)
     print("\nID do pacote:", ip_packet.id)
     print("Source IP:", IP.addr2str(ip_packet.src_ip))
@@ -359,11 +354,12 @@ def ip_recv(packet):
     if ip_packet.received_all:
         print("Payload:")
         print("Tamanho:", len(ip_packet.payload), "bytes")
-        print("Bytes:")
-        string = ""
-        for byte in ip_packet.payload:
-            string += str(format(byte, "#04x")) + " "
-        print(string)
+        # print("Bytes:")
+        # string = ""
+        # for byte in ip_packet.payload:
+        #     string += str(format(byte, "#04x")) + " "
+        # print(string)
+        etapa2.TCP_Socket.raw_recv(fd, ip_packet, mac, app)
 
 def calc_checksum(segment):
     if len(segment) % 2 == 1:

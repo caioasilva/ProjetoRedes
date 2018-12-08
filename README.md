@@ -65,3 +65,17 @@ Executar através do comando:
 
     sudo python3 etapa4.py
 
+## Etapa 5
+Integração. Todas as etapas etapas foram interligadas.
+
+### Como usar
+Antes de usar, execute o seguinte comando para evitar que o Linux feche
+as conexoes TCP abertas por este programa:
+
+    sudo iptables -I OUTPUT -p tcp --tcp-flags RST RST -j DROP
+
+Executar através do comando:
+
+    sudo python3 etapa5.py
+    
+O servidor HTTP será iniciado na porta 8080
