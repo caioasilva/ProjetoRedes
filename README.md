@@ -69,8 +69,9 @@ Executar através do comando:
 Integração. Todas as etapas etapas foram interligadas.
 
 ### Como usar
-Antes de usar, execute o seguinte comando para evitar que o Linux feche
-as conexoes TCP abertas por este programa:
+Primeiro, modifique as variáveis if_name, my_mac e src_ip no arquivo etapa5.py para corresponder aos valores de seu computador.
+
+Depois, execute o seguinte comando para evitar que o Linux feche as conexoes TCP abertas por este programa:
 
     sudo iptables -I OUTPUT -p tcp --tcp-flags RST RST -j DROP
 
@@ -78,4 +79,7 @@ Executar através do comando:
 
     sudo python3 etapa5.py
     
-O servidor HTTP será iniciado na porta 8080
+O servidor HTTP será iniciado na porta 8080.
+
+Inicialmente foi utilizada uma imagem bastante pesada no plano de fundo da página web para testar o funcionamento da implementação. Porém, como o Autolab não suporta envios maiores que 1MB, o arquivo foi substituido por um menor. Entretanto, se for desejado realizar esse teste é necessário somente substituir o arquivo "image.jpg" na pasta "www" por um de maior resolução.
+

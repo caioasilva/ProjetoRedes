@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+# -*- encoding: utf-8 -*-
 '''
 Antes de usar, execute o seguinte comando para evitar que o Linux feche
 as conexoes TCP abertas por este programa:
