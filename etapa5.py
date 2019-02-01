@@ -30,7 +30,7 @@ if_name = 'wlp2s0'
 etapa4.src_ip = '10.0.1.61'
 
 # Coloque aqui o endereço MAC da sua placa de rede (ip link show dev wlan0)
-etapa4.my_mac = '5c:c9:d3:63:27:3e'
+etapa4.my_mac = '11:22:33:44:55:66'
 
 if __name__ == '__main__':
     app = HTTPServer(FILES_DIR)

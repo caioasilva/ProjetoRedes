@@ -32,10 +32,10 @@ src_ip = '10.0.1.27'
 if_name = 'wlp2s0'
 
 # Coloque aqui o endereço MAC do roteador da sua rede local (arp -a | grep _gateway)
-dest_mac = '5c:96:9d:6d:bb:b6'
+dest_mac = '11:22:33:44:55:66'
 
 # Coloque aqui o endereço MAC da sua placa de rede (ip link show dev wlan0)
-my_mac = '5c:c9:d3:63:27:3e'
+my_mac = '11:22:33:44:55:66'
 
 
 payload =   b'\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46\x00\x01\x01\x01\x00\x48' \
